@@ -4,6 +4,10 @@ import { SignupDto } from './dto/signup.dto';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
-    login(loginDto: LoginDto): Promise<import(".prisma/client").User>;
-    signup(signupDto: SignupDto): Promise<import(".prisma/client").User>;
+    login(loginDto: LoginDto): Promise<{
+        token: string;
+    }>;
+    signup(signupDto: SignupDto): Promise<{
+        token: string;
+    }>;
 }

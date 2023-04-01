@@ -14,9 +14,13 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const argon2 = require("argon2");
 const library_1 = require("@prisma/client/runtime/library");
+const config_1 = require("@nestjs/config");
+const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
-    constructor(prismaService) {
+    constructor(prismaService, configService, jwtService) {
         this.prismaService = prismaService;
+        this.configService = configService;
+        this.jwtService = jwtService;
     }
     async login(loginDto) {
         const user = await this.prismaService.user.findUnique({
@@ -31,7 +35,7 @@ let AuthService = class AuthService {
         if (!passwordsMatch) {
             throw new common_1.ForbiddenException('Wrong Password');
         }
-        return user;
+        return this.signToken(user.id, user.email);
     }
     async signup(signupDto) {
         const hashedPassword = await argon2.hash(signupDto.password);
@@ -44,7 +48,7 @@ let AuthService = class AuthService {
                     name: signupDto.name,
                 },
             });
-            return user;
+            return this.signToken(user.id, user.email);
         }
         catch (error) {
             if (error instanceof library_1.PrismaClientKnownRequestError) {
@@ -55,10 +59,22 @@ let AuthService = class AuthService {
             throw error;
         }
     }
+    signToken(userId, email) {
+        const payload = {
+            sub: userId,
+            email,
+        };
+        return this.jwtService.signAsync(payload, {
+            secret: this.configService.get('JWT_SECRET'),
+            expiresIn: '60m',
+        });
+    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        config_1.ConfigService,
+        jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map
