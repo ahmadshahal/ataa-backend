@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const argon2 = require("argon2");
 let AuthService = class AuthService {
     constructor(prismaService) {
         this.prismaService = prismaService;
@@ -19,8 +20,17 @@ let AuthService = class AuthService {
     login(loginDto) {
         return 'login function in AuthService';
     }
-    signup() {
-        return 'signup function in AuthService';
+    async signup(signupDto) {
+        const hashedPassword = await argon2.hash(signupDto.password);
+        const user = await this.prismaService.user.create({
+            data: {
+                email: signupDto.email,
+                password: hashedPassword,
+                phonenumber: signupDto.phoneNumber,
+                name: signupDto.email,
+            },
+        });
+        return user;
     }
 };
 AuthService = __decorate([

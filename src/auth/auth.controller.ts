@@ -13,7 +13,7 @@ export class AuthController {
   }
 
   @Post('signup')
-  signup(@Body() signupDto: SignupDto): string {
+  signup(@Body() signupDto: SignupDto) {
     return this.authService.signup(signupDto);
   }
 }
