@@ -16,7 +16,7 @@ let AuthService = class AuthService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
-    login() {
+    login(loginDto) {
         return 'login function in AuthService';
     }
     signup() {
