@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { JwtGurad } from 'src/auth/guard/jwt.guard';
 
@@ -7,7 +7,8 @@ import { JwtGurad } from 'src/auth/guard/jwt.guard';
 export class UserController {
     constructor(private userService: UserService) {}
     @Get('profile')
-    async profile() {
-        return this.userService.profile();
+    profile(@Request() req: Request) {
+        const userId = req['user'].sub;
+        return this.userService.profile(userId);
     }
 }
