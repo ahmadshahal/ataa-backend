@@ -5,6 +5,6 @@ import { User } from '@prisma/client';
 export declare class AuthService {
     private prismaService;
     constructor(prismaService: PrismaService);
-    login(loginDto: LoginDto): string;
+    login(loginDto: LoginDto): Promise<User>;
     signup(signupDto: SignupDto): Promise<User>;
 }

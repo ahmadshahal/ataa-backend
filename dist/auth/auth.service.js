@@ -18,8 +18,20 @@ let AuthService = class AuthService {
     constructor(prismaService) {
         this.prismaService = prismaService;
     }
-    login(loginDto) {
-        return 'login function in AuthService';
+    async login(loginDto) {
+        const user = await this.prismaService.user.findUnique({
+            where: {
+                email: loginDto.email,
+            },
+        });
+        if (!user) {
+            throw new common_1.ForbiddenException('Credentials Incorrect');
+        }
+        const passwordsMatch = await argon2.verify(user.password, loginDto.password);
+        if (!passwordsMatch) {
+            throw new common_1.ForbiddenException('Wrong Password');
+        }
+        return user;
     }
     async signup(signupDto) {
         const hashedPassword = await argon2.hash(signupDto.password);
