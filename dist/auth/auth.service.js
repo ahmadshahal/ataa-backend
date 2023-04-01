@@ -41,7 +41,7 @@ let AuthService = class AuthService {
                     email: signupDto.email,
                     password: hashedPassword,
                     phonenumber: signupDto.phoneNumber,
-                    name: signupDto.email,
+                    name: signupDto.name,
                 },
             });
             return user;
