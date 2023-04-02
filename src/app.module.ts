@@ -3,6 +3,11 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ProjectModule } from './project/project.module';
+
+// *: 1- yarn start:dev
+// *: 2- yarn db:dev:restart
+// *: 3- yarn prisma migrate deploy
 
 @Module({
     imports: [
@@ -10,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
         ConfigModule.forRoot({ isGlobal: true }),
         UserModule,
         PrismaModule,
+        ProjectModule,
     ],
 })
 export class AppModule {}

@@ -12,6 +12,7 @@ const auth_module_1 = require("./auth/auth.module");
 const config_1 = require("@nestjs/config");
 const user_module_1 = require("./user/user.module");
 const prisma_module_1 = require("./prisma/prisma.module");
+const project_module_1 = require("./project/project.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -21,6 +22,7 @@ AppModule = __decorate([
             config_1.ConfigModule.forRoot({ isGlobal: true }),
             user_module_1.UserModule,
             prisma_module_1.PrismaModule,
+            project_module_1.ProjectModule,
         ],
     })
 ], AppModule);
