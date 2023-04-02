@@ -17,3 +17,12 @@ model User {
     password    String
     phonenumber String @unique
 }
+
+model Project {
+    id          Int    @id @default(autoincrement())
+    title       String
+    description String
+    goals       String
+    raised      Float
+    target      Float
+}
