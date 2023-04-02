@@ -1,3 +1,4 @@
+import { Type } from "class-transformer"
 import { IsNotEmpty, IsNumber, IsNumberString, IsString } from "class-validator"
 
 export class CreateProjectDto {
@@ -12,11 +13,13 @@ export class CreateProjectDto {
     goals: string
 
     @IsNotEmpty()
-    @IsNumberString() // ?: @IsNumber()
+    @IsNumber()
+    @Type(() => Number)
     raised: number
 
     @IsNotEmpty()
-    @IsNumberString() // ?: @IsNumber()
+    @IsNumber()
+    @Type(() => Number)
     target: number
 
     // TODO: Add Tags.
