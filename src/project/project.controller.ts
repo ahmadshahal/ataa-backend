@@ -25,14 +25,14 @@ export class ProjectController {
     @HttpCode(HttpStatus.OK)
     @Post(':id')
     update(@Param() params: any, @Body() UpdateProjectDto: UpdateProjectDto) {
-        const projectId = params.id;
+        const projectId = Number(params.id);
         this.projectService.update(projectId, UpdateProjectDto);
     }
 
     @HttpCode(HttpStatus.OK)
     @Delete(':id')
     delete(@Param() params: any) {
-        const projectId = params.id;
+        const projectId = Number(params.id);
         this.projectService.delete(projectId);
     }
 }
