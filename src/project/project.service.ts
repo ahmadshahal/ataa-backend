@@ -8,15 +8,7 @@ export class ProjectService {
     constructor(private prismaService: PrismaService) {}
 
     async read() {
-        return await this.prismaService.project.findMany({
-            select: {
-                id: false,
-                title: true,
-                description: true,
-                goals: true,
-                raised: true,
-            },
-        });
+        return await this.prismaService.project.findMany();
     }
 
     async create(createProjectDto: CreateProjectDto) {
