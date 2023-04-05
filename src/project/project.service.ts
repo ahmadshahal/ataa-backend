@@ -7,7 +7,15 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 export class ProjectService {
     constructor(private prismaService: PrismaService) {}
 
-    async read() {
+    async readOne(projectId: number) {
+        return await this.prismaService.project.findFirst({
+            where: {
+                id: projectId,
+            },
+        });
+    }
+
+    async readAll() {
         return await this.prismaService.project.findMany();
     }
 

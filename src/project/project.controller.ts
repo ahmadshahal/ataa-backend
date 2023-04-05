@@ -19,8 +19,15 @@ export class ProjectController {
 
     @HttpCode(HttpStatus.OK)
     @Get()
-    async read() {
-        return await this.projectService.read();
+    async readAll() {
+        return await this.projectService.readAll();
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Get(':id')
+    async readOne(@Param() params: any) {
+        const projectId = Number(params.id);
+        return await this.projectService.readOne(projectId);
     }
 
     @HttpCode(HttpStatus.CREATED)
@@ -31,7 +38,10 @@ export class ProjectController {
 
     @HttpCode(HttpStatus.OK)
     @Post(':id')
-    async update(@Param() params: any, @Body() UpdateProjectDto: UpdateProjectDto) {
+    async update(
+        @Param() params: any,
+        @Body() UpdateProjectDto: UpdateProjectDto,
+    ) {
         const projectId = Number(params.id);
         await this.projectService.update(projectId, UpdateProjectDto);
     }
