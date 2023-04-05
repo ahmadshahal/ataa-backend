@@ -2,6 +2,7 @@ import {
     Body,
     Controller,
     Delete,
+    Get,
     HttpCode,
     HttpStatus,
     Param,
@@ -16,23 +17,29 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 export class ProjectController {
     constructor(private projectService: ProjectService) {}
 
+    @HttpCode(HttpStatus.OK)
+    @Get()
+    async read() {
+        return await this.projectService.read();
+    }
+
     @HttpCode(HttpStatus.CREATED)
     @Post()
-    create(@Body() createProjectDto: CreateProjectDto) {
-        this.projectService.create(createProjectDto);
+    async create(@Body() createProjectDto: CreateProjectDto) {
+        await this.projectService.create(createProjectDto);
     }
 
     @HttpCode(HttpStatus.OK)
     @Post(':id')
-    update(@Param() params: any, @Body() UpdateProjectDto: UpdateProjectDto) {
+    async update(@Param() params: any, @Body() UpdateProjectDto: UpdateProjectDto) {
         const projectId = Number(params.id);
-        this.projectService.update(projectId, UpdateProjectDto);
+        await this.projectService.update(projectId, UpdateProjectDto);
     }
 
     @HttpCode(HttpStatus.OK)
     @Delete(':id')
-    delete(@Param() params: any) {
+    async delete(@Param() params: any) {
         const projectId = Number(params.id);
-        this.projectService.delete(projectId);
+        await this.projectService.delete(projectId);
     }
 }
