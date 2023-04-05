@@ -6,6 +6,7 @@ import {
     HttpCode,
     HttpStatus,
     Param,
+    ParseIntPipe,
     Post,
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -25,9 +26,8 @@ export class ProjectController {
 
     @HttpCode(HttpStatus.OK)
     @Get(':id')
-    async readOne(@Param() params: any) {
-        const projectId = Number(params.id);
-        return await this.projectService.readOne(projectId);
+    async readOne(@Param('id', ParseIntPipe) id: number) {
+        return await this.projectService.readOne(id);
     }
 
     @HttpCode(HttpStatus.CREATED)
@@ -39,17 +39,15 @@ export class ProjectController {
     @HttpCode(HttpStatus.OK)
     @Post(':id')
     async update(
-        @Param() params: any,
+        @Param('id', ParseIntPipe) id: number,
         @Body() UpdateProjectDto: UpdateProjectDto,
     ) {
-        const projectId = Number(params.id);
-        await this.projectService.update(projectId, UpdateProjectDto);
+        await this.projectService.update(id, UpdateProjectDto);
     }
 
     @HttpCode(HttpStatus.OK)
     @Delete(':id')
-    async delete(@Param() params: any) {
-        const projectId = Number(params.id);
-        await this.projectService.delete(projectId);
+    async delete(@Param('id', ParseIntPipe) id: number) {
+        await this.projectService.delete(id);
     }
 }

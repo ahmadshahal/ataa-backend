@@ -2,20 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { Project } from '@prisma/client';
 
 @Injectable()
 export class ProjectService {
     constructor(private prismaService: PrismaService) {}
 
-    async readOne(projectId: number) {
+    async readOne(id: number): Promise<Project> {
         return await this.prismaService.project.findFirst({
             where: {
-                id: projectId,
+                id: id,
             },
         });
     }
 
-    async readAll() {
+    async readAll(): Promise<Project[]> {
         return await this.prismaService.project.findMany();
     }
 
@@ -31,18 +32,18 @@ export class ProjectService {
         });
     }
 
-    async delete(projectId: number) {
+    async delete(id: number) {
         await this.prismaService.project.delete({
             where: {
-                id: projectId,
+                id: id,
             },
         });
     }
 
-    async update(projectId: number, updateProjectDto: UpdateProjectDto) {
+    async update(id: number, updateProjectDto: UpdateProjectDto) {
         await this.prismaService.project.update({
             where: {
-                id: projectId,
+                id: id,
             },
             data: {
                 title: updateProjectDto.title,
