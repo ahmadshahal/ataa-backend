@@ -23,6 +23,6 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('verify')
     async verify(@Body() verificationDto: VerificationDto) {
-        
+        await this.authService.verify(verificationDto);
     }
 }

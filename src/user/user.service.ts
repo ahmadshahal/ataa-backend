@@ -4,10 +4,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class UserService {
     constructor(private prismaService: PrismaService) {}
-    async profile(userId: number) {
+    async profile(id: number) {
         return await this.prismaService.user.findUnique({
             where: {
-                id: userId,
+                id: id,
             },
             select: {
                 email: true,

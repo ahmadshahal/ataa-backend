@@ -10,7 +10,7 @@ export class UserController {
 
     @HttpCode(HttpStatus.OK)
     @Get('profile')
-    profile(@UserId() userId: number) {
-        return this.userService.profile(userId);
+    profile(@UserId() id: number) {
+        return this.userService.profile(id);
     }
 }

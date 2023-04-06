@@ -6,6 +6,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { VerificationDto } from './dto/verification.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,9 @@ export class AuthService {
         });
         if (!user) {
             throw new ForbiddenException('Credentials Incorrect');
+        }
+        if (!user.verified) {
+            throw new ForbiddenException('Account Verification Required');
         }
         const passwordsMatch = await argon.verify(
             user.password,
@@ -50,6 +54,29 @@ export class AuthService {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
                     throw new ForbiddenException('Credentials Taken');
+                }
+            }
+            throw error;
+        }
+    }
+
+    async verify(verificationDto: VerificationDto) {
+        try {
+            await this.prismaService.user.update({
+                data: {
+                    verified: true,
+                },
+                where: {
+                    email: verificationDto.email,
+                },
+            });
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2001') {
+                    throw new ForbiddenException('Credentials Incorrect');
+                }
+                if (error.code === 'P2025') {
+                    throw new ForbiddenException('Credentials Incorrect');
                 }
             }
             throw error;
