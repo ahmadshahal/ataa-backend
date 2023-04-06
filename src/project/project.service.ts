@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { Project } from '@prisma/client';
+import { Prisma, Project } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class ProjectService {
                 },
             });
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
                     // ?: Forbidden or BadRequest?
                     throw new ForbiddenException();
@@ -65,8 +65,8 @@ export class ProjectService {
                     target: updateProjectDto.target,
                 },
             });
-        } catch(error) {
-            if (error instanceof PrismaClientKnownRequestError) {
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
                     // ?: Forbidden or BadRequest?
                     throw new ForbiddenException();
