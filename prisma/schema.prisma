@@ -16,7 +16,7 @@ model User {
     name             String
     password         String
     phonenumber      String             @unique
-    verified         Boolean
+    verified         Boolean            @default(false)
     VerificationCode VerificationCode[]
 }
 
