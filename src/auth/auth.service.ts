@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
-import * as argon2 from 'argon2';
+import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -24,18 +24,18 @@ export class AuthService {
         if (!user) {
             throw new ForbiddenException('Credentials Incorrect');
         }
-        const passwordsMatch = await argon2.verify(
+        const passwordsMatch = await argon.verify(
             user.password,
             loginDto.password,
         );
         if (!passwordsMatch) {
             throw new ForbiddenException('Wrong Password');
         }
-        return this.signToken(user.id, user.email);
+        return await this.signToken(user.id, user.email);
     }
 
     async signup(signupDto: SignupDto): Promise<string> {
-        const hashedPassword = await argon2.hash(signupDto.password);
+        const hashedPassword = await argon.hash(signupDto.password);
         try {
             const user = await this.prismaService.user.create({
                 data: {
@@ -45,7 +45,7 @@ export class AuthService {
                     name: signupDto.name,
                 },
             });
-            return this.signToken(user.id, user.email);
+            return await this.signToken(user.id, user.email);
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
@@ -56,7 +56,7 @@ export class AuthService {
         }
     }
 
-    signToken(userId: number, email: string): Promise<string> {
+    private signToken(userId: number, email: string): Promise<string> {
         const payload = {
             sub: userId,
             email,

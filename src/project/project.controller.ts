@@ -8,12 +8,14 @@ import {
     Param,
     ParseIntPipe,
     Post,
+    UseGuards,
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectService } from './project.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
-// ?: Should I use it here? @UseGuards(JwtGurad)
+@UseGuards(JwtGuard)
 @Controller('project')
 export class ProjectController {
     constructor(private projectService: ProjectService) {}
