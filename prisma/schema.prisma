@@ -11,11 +11,13 @@ datasource db {
 }
 
 model User {
-    id          Int    @id @default(autoincrement())
-    email       String @unique
-    name        String
-    password    String
-    phonenumber String @unique
+    id               Int                @id @default(autoincrement())
+    email            String             @unique
+    name             String
+    password         String
+    phonenumber      String             @unique
+    verified         Boolean
+    VerificationCode VerificationCode[]
 }
 
 model Project {
@@ -25,4 +27,11 @@ model Project {
     goals       String
     raised      Float
     target      Float
+}
+
+model VerificationCode {
+    id     Int    @id @default(autoincrement())
+    code   String @unique
+    userId Int
+    user   User   @relation(fields: [userId], references: [id])
 }
