@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class ProjectService {
@@ -33,25 +34,45 @@ export class ProjectService {
     }
 
     async delete(id: number) {
-        await this.prismaService.project.delete({
-            where: {
-                id: id,
-            },
-        });
+        try {
+            await this.prismaService.project.delete({
+                where: {
+                    id: id,
+                },
+            });
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    // ?: Forbidden or BadRequest?
+                    throw new ForbiddenException();
+                }
+            }
+            throw error;
+        }
     }
 
     async update(id: number, updateProjectDto: UpdateProjectDto) {
-        await this.prismaService.project.update({
-            where: {
-                id: id,
-            },
-            data: {
-                title: updateProjectDto.title,
-                description: updateProjectDto.description,
-                goals: updateProjectDto.goals,
-                raised: updateProjectDto.raised,
-                target: updateProjectDto.target,
-            },
-        });
+        try {
+            await this.prismaService.project.update({
+                where: {
+                    id: id,
+                },
+                data: {
+                    title: updateProjectDto.title,
+                    description: updateProjectDto.description,
+                    goals: updateProjectDto.goals,
+                    raised: updateProjectDto.raised,
+                    target: updateProjectDto.target,
+                },
+            });
+        } catch(error) {
+            if (error instanceof PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    // ?: Forbidden or BadRequest?
+                    throw new ForbiddenException();
+                }
+            }
+            throw error;
+        }
     }
 }

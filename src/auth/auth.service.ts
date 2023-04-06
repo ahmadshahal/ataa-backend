@@ -72,10 +72,8 @@ export class AuthService {
             });
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
-                if (error.code === 'P2001') {
-                    throw new ForbiddenException('Credentials Incorrect');
-                }
                 if (error.code === 'P2025') {
+                    // ?: Forbidden or BadRequest?
                     throw new ForbiddenException('Credentials Incorrect');
                 }
             }
