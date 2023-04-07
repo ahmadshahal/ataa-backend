@@ -10,7 +10,7 @@ async function bootstrap() {
             whitelist: true,
         }),
     );
-    app.useGlobalFilters(new PrismaClientExceptionFilter())
+    // ?: app.useGlobalFilters(new PrismaClientExceptionFilter())
     await app.listen(3000);
 }
 bootstrap();
