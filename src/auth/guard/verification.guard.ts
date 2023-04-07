@@ -13,9 +13,9 @@ export class VerificationGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const userId = request.user.sub;
-        const verified = this.authService.isVerified(userId);
+        const verified = await this.authService.isVerified(userId);
         if (!verified) {
-            throw new ForbiddenException();
+            throw new ForbiddenException('Verification Required');
         }
         return true;
     }

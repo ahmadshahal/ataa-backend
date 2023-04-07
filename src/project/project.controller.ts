@@ -14,8 +14,9 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectService } from './project.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
+import { VerificationGuard } from 'src/auth/guard/verification.guard';
 
-@UseGuards(JwtGuard)
+@UseGuards(JwtGuard, VerificationGuard)
 @Controller('project')
 export class ProjectController {
     constructor(private projectService: ProjectService) {}
