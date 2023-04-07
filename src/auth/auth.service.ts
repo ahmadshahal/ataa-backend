@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { VerificationDto } from './dto/verification.dto';
@@ -26,9 +25,11 @@ export class AuthService {
         if (!user) {
             throw new ForbiddenException('Credentials Incorrect');
         }
+        /*
         if (!user.verified) {
             throw new ForbiddenException('Account Verification Required');
         }
+        */
         const passwordsMatch = await argon.verify(
             user.password,
             loginDto.password,
@@ -48,6 +49,13 @@ export class AuthService {
                     password: hashedPassword,
                     phonenumber: signupDto.phoneNumber,
                     name: signupDto.name,
+                },
+            });
+            const verificationCode = this.generateVerificationCode();
+            await this.prismaService.verificationCode.create({
+                data: {
+                    code: verificationCode,
+                    userId: user.id,
                 },
             });
             return await this.signToken(user.id, user.email);
@@ -91,5 +99,9 @@ export class AuthService {
             secret: this.configService.get('JWT_SECRET'),
             expiresIn: '60m',
         });
+    }
+
+    private generateVerificationCode(): string {
+        return Math.floor(1000 + Math.random() * 9000).toString();
     }
 }

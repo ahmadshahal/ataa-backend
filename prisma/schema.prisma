@@ -31,7 +31,7 @@ model Project {
 
 model VerificationCode {
     id     Int    @id @default(autoincrement())
-    code   String @unique
+    code   String
     userId Int
     user   User   @relation(fields: [userId], references: [id])
 }
