@@ -49,17 +49,7 @@ export class AuthService {
                 },
             });
             const verificationCode = this.generateVerificationCode();
-            await this.prismaService.verificationCode.create({
-                data: {
-                    code: verificationCode,
-                    userId: user.id,
-                },
-            });
-            await this.mailerService.sendMail({
-                text: `Your account verificaiton code is: ${verificationCode}`,
-                to: user.email,
-                subject: 'Ataa Login Verification Code',
-            });
+            this.saveAndSendCode(user.id, user.email, verificationCode);
             return await this.signToken(user.id, user.email);
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -101,6 +91,19 @@ export class AuthService {
         }
     }
 
+    async sendCodeAgain(id: number) {
+        const user = await this.prismaService.user.findFirst({
+            where: {
+                id: id,
+            },
+        });
+        if (!user) {
+            throw new BadRequestException('Credentials Incorrect');
+        }
+        const verificationCode = this.generateVerificationCode();
+        this.saveAndSendCode(user.id, user.email, verificationCode);
+    }
+
     async isVerified(id: number): Promise<boolean> {
         const user = await this.prismaService.user.findFirst({
             where: {
@@ -111,6 +114,20 @@ export class AuthService {
             return false;
         }
         return user.verified;
+    }
+
+    private async saveAndSendCode(id: number, email: string, code: string) {
+        await this.prismaService.verificationCode.create({
+            data: {
+                code: code,
+                userId: id,
+            },
+        });
+        await this.mailerService.sendMail({
+            text: `Your account verificaiton code is: ${code}`,
+            to: email,
+            subject: 'Ataa Login Verification Code',
+        });
     }
 
     private signToken(userId: number, email: string): Promise<string> {

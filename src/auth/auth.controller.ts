@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
     Post,
@@ -37,5 +38,12 @@ export class AuthController {
         @Body() verificationDto: VerificationDto,
     ) {
         await this.authService.verify(id, verificationDto);
+    }
+
+    @UseGuards(JwtGuard)
+    @HttpCode(HttpStatus.OK)
+    @Get('send-code-again')
+    async sendCodeAgain(@UserId() id: number) {
+        await this.authService.sendCodeAgain(id);
     }
 }
