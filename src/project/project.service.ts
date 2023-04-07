@@ -34,45 +34,25 @@ export class ProjectService {
     }
 
     async delete(id: number) {
-        try {
-            await this.prismaService.project.delete({
-                where: {
-                    id: id,
-                },
-            });
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2025') {
-                    // ?: Forbidden or BadRequest?
-                    throw new ForbiddenException();
-                }
-            }
-            throw error;
-        }
+        await this.prismaService.project.delete({
+            where: {
+                id: id,
+            },
+        });
     }
 
     async update(id: number, updateProjectDto: UpdateProjectDto) {
-        try {
-            await this.prismaService.project.update({
-                where: {
-                    id: id,
-                },
-                data: {
-                    title: updateProjectDto.title,
-                    description: updateProjectDto.description,
-                    goals: updateProjectDto.goals,
-                    raised: updateProjectDto.raised,
-                    target: updateProjectDto.target,
-                },
-            });
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2025') {
-                    // ?: Forbidden or BadRequest?
-                    throw new ForbiddenException();
-                }
-            }
-            throw error;
-        }
+        await this.prismaService.project.update({
+            where: {
+                id: id,
+            },
+            data: {
+                title: updateProjectDto.title,
+                description: updateProjectDto.description,
+                goals: updateProjectDto.goals,
+                raised: updateProjectDto.raised,
+                target: updateProjectDto.target,
+            },
+        });
     }
 }

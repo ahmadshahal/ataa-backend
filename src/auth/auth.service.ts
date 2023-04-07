@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
@@ -23,7 +23,7 @@ export class AuthService {
             },
         });
         if (!user) {
-            throw new ForbiddenException('Credentials Incorrect');
+            throw new BadRequestException('Credentials Incorrect');
         }
         /*
         if (!user.verified) {
@@ -35,7 +35,7 @@ export class AuthService {
             loginDto.password,
         );
         if (!passwordsMatch) {
-            throw new ForbiddenException('Wrong Password');
+            throw new BadRequestException('Wrong Password');
         }
         return await this.signToken(user.id, user.email);
     }
@@ -62,7 +62,7 @@ export class AuthService {
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2002') {
-                    throw new ForbiddenException('Credentials Taken');
+                    throw new BadRequestException('Credentials Taken');
                 }
             }
             throw error;
@@ -83,7 +83,7 @@ export class AuthService {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
                     // ?: Forbidden or BadRequest?
-                    throw new ForbiddenException('Credentials Incorrect');
+                    throw new BadRequestException('Credentials Incorrect');
                 }
             }
             throw error;
