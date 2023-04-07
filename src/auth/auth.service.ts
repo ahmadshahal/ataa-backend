@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import { VerificationDto } from './dto/verification.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
         private prismaService: PrismaService,
         private configService: ConfigService,
         private jwtService: JwtService,
+        private mailerService: MailerService,
     ) {}
 
     async login(loginDto: LoginDto): Promise<string> {
@@ -52,6 +54,11 @@ export class AuthService {
                     code: verificationCode,
                     userId: user.id,
                 },
+            });
+            await this.mailerService.sendMail({
+                text: `Your account verificaiton code is: ${verificationCode}`,
+                to: user.email,
+                subject: 'Ataa Login Verification Code',
             });
             return await this.signToken(user.id, user.email);
         } catch (error) {
