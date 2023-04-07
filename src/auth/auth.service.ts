@@ -5,8 +5,8 @@ import { SignupDto } from './dto/signup.dto';
 import * as argon from 'argon2';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { VerificationDto } from './dto/verification.dto';
 import { Prisma } from '@prisma/client';
+import { VerificationDto } from './dto/verification.dto';
 
 @Injectable()
 export class AuthService {
@@ -25,11 +25,6 @@ export class AuthService {
         if (!user) {
             throw new BadRequestException('Credentials Incorrect');
         }
-        /*
-        if (!user.verified) {
-            throw new ForbiddenException('Account Verification Required');
-        }
-        */
         const passwordsMatch = await argon.verify(
             user.password,
             loginDto.password,
@@ -69,14 +64,14 @@ export class AuthService {
         }
     }
 
-    async verify(verificationDto: VerificationDto) {
+    async verify(id: number, verificationDto: VerificationDto) {
         try {
             await this.prismaService.user.update({
                 data: {
                     verified: true,
                 },
                 where: {
-                    email: verificationDto.email,
+                    id: id
                 },
             });
         } catch (error) {
@@ -87,6 +82,18 @@ export class AuthService {
             }
             throw error;
         }
+    }
+
+    async isVerified(id: number): Promise<boolean> {
+        const user = await this.prismaService.user.findFirst({
+            where: {
+                id: id,
+            },
+        });
+        if (!user) {
+            return false;
+        }
+        return user.verified;
     }
 
     private signToken(userId: number, email: string): Promise<string> {

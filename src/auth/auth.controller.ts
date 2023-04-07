@@ -1,7 +1,16 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    HttpCode,
+    HttpStatus,
+    Post,
+    UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { SignupDto } from './dto/signup.dto';
+import { UserId } from './decorator/user-id.decorator';
+import { JwtGuard } from './guard/jwt.guard';
 import { VerificationDto } from './dto/verification.dto';
 
 @Controller('auth')
@@ -20,9 +29,13 @@ export class AuthController {
         return { token: await this.authService.signup(signupDto) };
     }
 
+    @UseGuards(JwtGuard)
     @HttpCode(HttpStatus.OK)
     @Post('verify')
-    async verify(@Body() verificationDto: VerificationDto) {
-        await this.authService.verify(verificationDto);
+    async verify(
+        @UserId() id: number,
+        @Body() verificationDto: VerificationDto,
+    ) {
+        await this.authService.verify(id, verificationDto);
     }
 }
