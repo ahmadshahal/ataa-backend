@@ -65,13 +65,23 @@ export class AuthService {
     }
 
     async verify(id: number, verificationDto: VerificationDto) {
+        const code = verificationDto.code;
         try {
+            const count = await this.prismaService.verificationCode.count({
+                where: {
+                    userId: id,
+                    code: code,
+                },
+            });
+            if (count === 0) {
+                throw new BadRequestException('Wrong Verification Code');
+            }
             await this.prismaService.user.update({
                 data: {
                     verified: true,
                 },
                 where: {
-                    id: id
+                    id: id,
                 },
             });
         } catch (error) {
