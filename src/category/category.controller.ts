@@ -3,7 +3,7 @@ import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { VerificationGuard } from 'src/auth/guard/verification.guard';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dt0';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 
 @UseGuards(JwtGuard, VerificationGuard)
