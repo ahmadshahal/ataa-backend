@@ -9,10 +9,12 @@ import {
 } from 'class-validator';
 
 export class UpdateProjectDto {
+    @IsOptional()
     @IsNotEmpty()
     @IsString()
     title: string;
 
+    @IsOptional()
     @IsNotEmpty()
     @IsString()
     description: string;
@@ -21,6 +23,7 @@ export class UpdateProjectDto {
     @IsString()
     goals: string;
 
+    @IsOptional()
     @IsNotEmpty()
     @IsNumber()
     @Type(() => Number)
