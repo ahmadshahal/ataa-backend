@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -19,7 +18,7 @@ export class ProjectService {
             },
         });
         if (!project) {
-            throw new NotFoundException();
+            throw new NotFoundException('Project Not Found');
         }
         return project;
     }
@@ -34,8 +33,8 @@ export class ProjectService {
                 title: createProjectDto.title,
                 description: createProjectDto.description,
                 goals: createProjectDto.goals,
-                raised: createProjectDto.raised,
                 target: createProjectDto.target,
+                tags: createProjectDto.tags,
             },
         });
     }
@@ -50,7 +49,7 @@ export class ProjectService {
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new BadRequestException();
+                    throw new NotFoundException('Project Not Found');
                 }
             }
             throw error;
@@ -67,14 +66,14 @@ export class ProjectService {
                     title: updateProjectDto.title,
                     description: updateProjectDto.description,
                     goals: updateProjectDto.goals,
-                    raised: updateProjectDto.raised,
                     target: updateProjectDto.target,
+                    tags: updateProjectDto.tags,
                 },
             });
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new BadRequestException();
+                    throw new NotFoundException('Project Not Found');
                 }
             }
             throw error;

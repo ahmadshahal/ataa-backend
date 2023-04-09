@@ -1,27 +1,36 @@
-import { Type } from "class-transformer"
-import { IsNotEmpty, IsNumber, IsString } from "class-validator"
+import { Type } from 'class-transformer';
+import {
+    IsArray,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+    MaxLength,
+} from 'class-validator';
 
 export class CreateProjectDto {
     @IsNotEmpty()
     @IsString()
-    title: string
+    title: string;
 
+    @IsNotEmpty()
     @IsString()
-    description: string
+    description: string;
 
+    @IsOptional()
     @IsString()
-    goals: string
+    goals: string;
 
     @IsNotEmpty()
     @IsNumber()
     @Type(() => Number)
-    raised: number
+    target: number;
 
-    @IsNotEmpty()
-    @IsNumber()
-    @Type(() => Number)
-    target: number
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true })
+    @MaxLength(30, { each: true })
+    tags: string[];
 
-    // TODO: Add Tags.
     // TODO: Add Category.
 }

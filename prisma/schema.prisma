@@ -21,12 +21,13 @@ model User {
 }
 
 model Project {
-    id          Int    @id @default(autoincrement())
+    id          Int      @id @default(autoincrement())
     title       String
     description String
-    goals       String
-    raised      Float
+    goals       String   @default("")
+    raised      Float    @default(0)
     target      Float
+    tags        String[] @default([])
 }
 
 model VerificationCode {
