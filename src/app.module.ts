@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectModule } from './project/project.module';
 import { JwtModule } from '@nestjs/jwt';
+import { CategoryModule } from './category/category.module';
 
 // *: 1- yarn start:dev
 // *: 2- yarn db:dev:restart
@@ -18,6 +19,7 @@ import { JwtModule } from '@nestjs/jwt';
         UserModule,
         PrismaModule,
         ProjectModule,
+        CategoryModule,
     ],
 })
 export class AppModule {}
