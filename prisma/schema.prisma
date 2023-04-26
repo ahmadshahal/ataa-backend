@@ -17,7 +17,7 @@ model User {
     password         String
     phonenumber      String             @unique
     verified         Boolean            @default(false)
-    VerificationCode VerificationCode[]
+    verificationCodes VerificationCode[]
 }
 
 model Project {
