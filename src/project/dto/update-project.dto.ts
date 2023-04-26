@@ -35,5 +35,10 @@ export class UpdateProjectDto {
     @MaxLength(30, { each: true })
     tags: string[];
 
-    // TODO: Add Category.
+    // ?: Should it be an array of IDs?
+    @IsOptional()
+    @IsArray()
+    @Type(() => Number)
+    @IsNumber({}, { each: true })
+    categories: number[];
 }

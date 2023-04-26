@@ -1,7 +1,4 @@
-import {
-    Injectable,
-    NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -28,15 +25,30 @@ export class ProjectService {
     }
 
     async create(createProjectDto: CreateProjectDto) {
-        await this.prismaService.project.create({
-            data: {
-                title: createProjectDto.title,
-                description: createProjectDto.description,
-                goals: createProjectDto.goals,
-                target: createProjectDto.target,
-                tags: createProjectDto.tags,
-            },
-        });
+        const categoriesIds = createProjectDto.categories ?? [];
+        try {
+            await this.prismaService.project.create({
+                data: {
+                    title: createProjectDto.title,
+                    description: createProjectDto.description,
+                    goals: createProjectDto.goals,
+                    target: createProjectDto.target,
+                    tags: createProjectDto.tags,
+                    categories: {
+                        connect: categoriesIds.map((categoryId) => ({
+                            id: categoryId,
+                        })),
+                    },
+                },
+            });
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError) {
+                if (error.code === 'P2025') {
+                    throw new NotFoundException('Some Categories Not Found');
+                }
+            }
+            throw error;
+        }
     }
 
     async delete(id: number) {
@@ -57,6 +69,7 @@ export class ProjectService {
     }
 
     async update(id: number, updateProjectDto: UpdateProjectDto) {
+        const categoriesIds = updateProjectDto.categories ?? [];
         try {
             await this.prismaService.project.update({
                 where: {
@@ -68,12 +81,17 @@ export class ProjectService {
                     goals: updateProjectDto.goals,
                     target: updateProjectDto.target,
                     tags: updateProjectDto.tags,
+                    categories: {
+                        connect: categoriesIds.map((categoryId) => ({
+                            id: categoryId,
+                        })),
+                    },
                 },
             });
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new NotFoundException('Project Not Found');
+                    throw new NotFoundException('Project Or Some Categories Not Found');
                 }
             }
             throw error;
