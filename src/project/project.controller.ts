@@ -6,15 +6,20 @@ import {
     HttpCode,
     HttpStatus,
     Param,
+    ParseFilePipe,
     ParseIntPipe,
     Post,
+    UploadedFile,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { ProjectService } from './project.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { VerificationGuard } from 'src/auth/guard/verification.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ProjectImageValidator } from './validator/project.validator';
 
 @UseGuards(JwtGuard, VerificationGuard)
 @Controller('project')
@@ -35,8 +40,18 @@ export class ProjectController {
 
     @HttpCode(HttpStatus.CREATED)
     @Post()
-    async create(@Body() createProjectDto: CreateProjectDto) {
-        await this.projectService.create(createProjectDto);
+    @UseInterceptors(FileInterceptor('image'))
+    async create(
+        @Body() createProjectDto: CreateProjectDto,
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: ProjectImageValidator,
+                fileIsRequired: false,
+            }),
+        )
+        image: Express.Multer.File,
+    ) {
+        await this.projectService.create(createProjectDto, image?.filename);
     }
 
     @HttpCode(HttpStatus.OK)

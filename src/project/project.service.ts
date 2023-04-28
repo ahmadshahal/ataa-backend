@@ -24,18 +24,18 @@ export class ProjectService {
         return await this.prismaService.project.findMany();
     }
 
-    async create(createProjectDto: CreateProjectDto) {
-        const categoriesIds = createProjectDto.categories ?? [];
+    async create(createProjectDto: CreateProjectDto, imageFileName: string) {
         try {
             await this.prismaService.project.create({
                 data: {
                     title: createProjectDto.title,
                     description: createProjectDto.description,
+                    imageFileName: imageFileName,
                     goals: createProjectDto.goals,
                     target: createProjectDto.target,
                     tags: createProjectDto.tags,
                     categories: {
-                        connect: categoriesIds.map((categoryId) => ({
+                        connect: createProjectDto.categories?.map((categoryId) => ({
                             id: categoryId,
                         })),
                     },
@@ -69,7 +69,6 @@ export class ProjectService {
     }
 
     async update(id: number, updateProjectDto: UpdateProjectDto) {
-        const categoriesIds = updateProjectDto.categories ?? [];
         try {
             await this.prismaService.project.update({
                 where: {
@@ -82,7 +81,7 @@ export class ProjectService {
                     target: updateProjectDto.target,
                     tags: updateProjectDto.tags,
                     categories: {
-                        connect: categoriesIds.map((categoryId) => ({
+                        connect: updateProjectDto.categories?.map((categoryId) => ({
                             id: categoryId,
                         })),
                     },
@@ -91,7 +90,9 @@ export class ProjectService {
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
-                    throw new NotFoundException('Project Or Some Categories Not Found');
+                    throw new NotFoundException(
+                        'Project Or Some Categories Not Found',
+                    );
                 }
             }
             throw error;

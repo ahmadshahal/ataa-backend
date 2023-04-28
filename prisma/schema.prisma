@@ -11,24 +11,25 @@ datasource db {
 }
 
 model User {
-    id               Int                @id @default(autoincrement())
-    email            String             @unique
-    name             String
-    password         String
-    phonenumber      String             @unique
-    verified         Boolean            @default(false)
+    id                Int                @id @default(autoincrement())
+    email             String             @unique
+    name              String
+    password          String
+    phonenumber       String             @unique
+    verified          Boolean            @default(false)
     verificationCodes VerificationCode[]
 }
 
 model Project {
-    id          Int        @id @default(autoincrement())
-    title       String
-    description String
-    goals       String     @default("")
-    raised      Float      @default(0)
-    target      Float
-    tags        String[]   @default([])
-    categories  Category[]
+    id            Int        @id @default(autoincrement())
+    title         String
+    description   String
+    imageFileName String?
+    goals         String     @default("")
+    raised        Float      @default(0)
+    target        Float
+    tags          String[]   @default([])
+    categories    Category[]
 }
 
 model Category {
