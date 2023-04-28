@@ -3,10 +3,14 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Prisma, Project } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ProjectService {
-    constructor(private prismaService: PrismaService) {}
+    constructor(
+        private prismaService: PrismaService,
+        private configService: ConfigService,
+    ) {}
 
     async readOne(id: number): Promise<Project> {
         const project = await this.prismaService.project.findFirst({
@@ -25,19 +29,24 @@ export class ProjectService {
     }
 
     async create(createProjectDto: CreateProjectDto, imageFileName: string) {
+        const assetsRelativePath = this.configService.get(
+            'ASSETS_RELATIVE_PATH',
+        );
         try {
             await this.prismaService.project.create({
                 data: {
                     title: createProjectDto.title,
                     description: createProjectDto.description,
-                    imageFileName: imageFileName,
+                    imageUrl: `${assetsRelativePath}/${imageFileName}`,
                     goals: createProjectDto.goals,
                     target: createProjectDto.target,
                     tags: createProjectDto.tags,
                     categories: {
-                        connect: createProjectDto.categories?.map((categoryId) => ({
-                            id: categoryId,
-                        })),
+                        connect: createProjectDto.categories?.map(
+                            (categoryId) => ({
+                                id: categoryId,
+                            }),
+                        ),
                     },
                 },
             });
@@ -68,7 +77,14 @@ export class ProjectService {
         }
     }
 
-    async update(id: number, updateProjectDto: UpdateProjectDto, imageFileName: string) {
+    async update(
+        id: number,
+        updateProjectDto: UpdateProjectDto,
+        imageFileName: string,
+    ) {
+        const assetsRelativePath = this.configService.get(
+            'ASSETS_RELATIVE_PATH',
+        );
         try {
             await this.prismaService.project.update({
                 where: {
@@ -77,14 +93,16 @@ export class ProjectService {
                 data: {
                     title: updateProjectDto.title,
                     description: updateProjectDto.description,
-                    imageFileName: imageFileName,
+                    imageUrl: `${assetsRelativePath}/${imageFileName}`,
                     goals: updateProjectDto.goals,
                     target: updateProjectDto.target,
                     tags: updateProjectDto.tags,
                     categories: {
-                        connect: updateProjectDto.categories?.map((categoryId) => ({
-                            id: categoryId,
-                        })),
+                        connect: updateProjectDto.categories?.map(
+                            (categoryId) => ({
+                                id: categoryId,
+                            }),
+                        ),
                     },
                 },
             });

@@ -38,6 +38,7 @@ export class ProjectController {
         return await this.projectService.readOne(id);
     }
 
+    // ?: Image is uploaded even after failing validation..
     @HttpCode(HttpStatus.CREATED)
     @Post()
     @UseInterceptors(FileInterceptor('image'))
@@ -54,6 +55,7 @@ export class ProjectController {
         await this.projectService.create(createProjectDto, image?.filename);
     }
 
+    // ?: Image is uploaded even after failing validation..
     @HttpCode(HttpStatus.OK)
     @Post(':id')
     @UseInterceptors(FileInterceptor('image'))
@@ -66,7 +68,7 @@ export class ProjectController {
                 fileIsRequired: false,
             }),
         )
-        image: Express.Multer.File
+        image: Express.Multer.File,
     ) {
         await this.projectService.update(id, UpdateProjectDto, image?.filename);
     }

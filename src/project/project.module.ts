@@ -11,7 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         MulterModule.registerAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
-                dest: configService.get('ASSETS_DEST'),
+                dest: configService.get('ASSETS_ABSOLUTE_PATH'),
             }),
             inject: [ConfigService],
         }),
