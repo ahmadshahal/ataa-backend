@@ -68,7 +68,7 @@ export class ProjectService {
         }
     }
 
-    async update(id: number, updateProjectDto: UpdateProjectDto) {
+    async update(id: number, updateProjectDto: UpdateProjectDto, imageFileName: string) {
         try {
             await this.prismaService.project.update({
                 where: {
@@ -77,6 +77,7 @@ export class ProjectService {
                 data: {
                     title: updateProjectDto.title,
                     description: updateProjectDto.description,
+                    imageFileName: imageFileName,
                     goals: updateProjectDto.goals,
                     target: updateProjectDto.target,
                     tags: updateProjectDto.tags,

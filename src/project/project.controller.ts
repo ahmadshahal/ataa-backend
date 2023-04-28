@@ -56,11 +56,19 @@ export class ProjectController {
 
     @HttpCode(HttpStatus.OK)
     @Post(':id')
+    @UseInterceptors(FileInterceptor('image'))
     async update(
         @Param('id', ParseIntPipe) id: number,
         @Body() UpdateProjectDto: UpdateProjectDto,
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: ProjectImageValidator,
+                fileIsRequired: false,
+            }),
+        )
+        image: Express.Multer.File
     ) {
-        await this.projectService.update(id, UpdateProjectDto);
+        await this.projectService.update(id, UpdateProjectDto, image?.filename);
     }
 
     @HttpCode(HttpStatus.OK)
